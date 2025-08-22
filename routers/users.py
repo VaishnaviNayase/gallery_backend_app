@@ -8,18 +8,17 @@ def login(email: str):
     try:
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM users WHERE email=%s;", (email,))
+        cur.execute(f"SELECT * FROM users WHERE email='{email}';" )
         user = cur.fetchone()
 
         if not user:
             cur.execute(
-                "INSERT INTO users (email) VALUES (%s) RETURNING userId, email;",
-                (email,)
+                f"INSERT INTO users (email) VALUES ('{email}') RETURNING userId, email;"
             )
             user = cur.fetchone()
             conn.commit()
 
-        user_id, user_email = user["userid"], user['email']  # unpack tuple
+        user_id, user_email = user[0], user[1]  # unpack tuple
 
     except Exception as e:
         print(f"Error during login: {e}")
